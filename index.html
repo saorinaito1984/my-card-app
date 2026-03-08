@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>カード引き落とし管理</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+:root {
+–bg: #0f1117;
+–surface: #1a1d27;
+–surface2: #22263a;
+–border: #2e3348;
+–accent: #4f8ef7;
+–accent2: #f7a94f;
+–accent3: #4ff7a0;
+–danger: #f75f5f;
+–text: #e8eaf2;
+–text2: #8890aa;
+–text3: #555e7a;
+}
+
+- { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+font-family: ‘Noto Sans JP’, sans-serif;
+background: var(–bg);
+color: var(–text);
+min-height: 100vh;
+padding: 20px 14px 80px;
+max-width: 480px;
+margin: 0 auto;
+}
+
+/* Header */
+.header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 20px;
+gap: 8px;
+}
+.header-title { font-size: 18px; font-weight: 700; }
+.header-sub { font-size: 11px; color: var(–text2); margin-top: 2px; }
+
+.month-selector {
+display: flex;
+align-items: center;
+gap: 6px;
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 10px;
+padding: 6px 10px;
+flex-shrink: 0;
+}
+.month-btn {
+width: 28px; height: 28px; border-radius: 6px;
+background: var(–surface2); border: 1px solid var(–border);
+color: var(–text); font-size: 12px; cursor: pointer;
+display: flex; align-items: center; justify-content: center;
+flex-shrink: 0;
+}
+.month-btn:active { background: var(–border); }
+/* Month label - bright and clear */
+.month-label {
+font-size: 15px;
+font-weight: 700;
+font-family: ‘JetBrains Mono’, monospace;
+color: var(–text);
+white-space: nowrap;
+min-width: 44px;
+text-align: center;
+}
+
+/* Salary */
+.salary-card {
+background: var(–surface); border: 1px solid var(–border);
+border-radius: 14px; padding: 14px 16px; margin-bottom: 14px;
+display: flex; flex-direction: column; gap: 10px;
+}
+.salary-row-inner { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.salary-label { font-size: 12px; color: var(–text2); white-space: nowrap; }
+.salary-input-wrap {
+display: flex; align-items: center; gap: 4px;
+background: var(–surface2); border: 1px solid var(–border);
+border-radius: 8px; padding: 7px 12px; flex: 1;
+}
+.salary-input-wrap span { font-size: 13px; color: var(–text2); }
+.salary-input-wrap input {
+background: transparent; border: none; outline: none;
+color: var(–text); font-family: ‘JetBrains Mono’, monospace;
+font-size: 17px; font-weight: 600; width: 100%; text-align: right;
+}
+.salday-row { display: flex; align-items: center; gap: 8px; }
+.salday-row select {
+background: var(–surface2); border: 1px solid var(–border);
+border-radius: 8px; color: var(–text); padding: 7px 10px;
+font-size: 13px; outline: none; flex: 1;
+font-family: ‘Noto Sans JP’, sans-serif;
+}
+
+/* Summary */
+.summary-grid {
+display: grid; grid-template-columns: 1fr 1fr;
+gap: 10px; margin-bottom: 14px;
+}
+.summary-card {
+background: var(–surface); border: 1px solid var(–border);
+border-radius: 14px; padding: 14px;
+}
+.summary-card.full { grid-column: 1 / -1; }
+.s-label { font-size: 10px; color: var(–text2); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 5px; }
+.s-value { font-family: ‘JetBrains Mono’, monospace; font-size: 22px; font-weight: 700; color: var(–accent); }
+.s-value.danger { color: var(–danger); }
+.s-value.ok { color: var(–accent3); }
+.s-note { font-size: 10px; color: var(–text3); margin-top: 3px; }
+
+/* Section title */
+.section-title {
+font-size: 11px; color: var(–text2); text-transform: uppercase;
+letter-spacing: 0.08em; margin-bottom: 10px;
+font-family: ‘JetBrains Mono’, monospace;
+display: flex; align-items: center; gap: 6px;
+}
+
+/* Card item */
+.card-item {
+background: var(–surface); border: 1px solid var(–border);
+border-radius: 14px; padding: 14px 16px; margin-bottom: 10px;
+transition: border-color 0.15s;
+}
+.card-item:focus-within { border-color: var(–accent); }
+
+/* Top row: dot + name + badge - all in one line, no overflow */
+.card-top {
+display: flex;
+align-items: center;
+gap: 8px;
+margin-bottom: 12px;
+min-height: 32px;
+}
+.color-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.card-name-input {
+flex: 1;
+min-width: 0; /* important: allows shrinking */
+background: transparent; border: none; outline: none;
+color: var(–text); font-family: ‘Noto Sans JP’, sans-serif;
+font-size: 15px; font-weight: 700;
+}
+/* Badge - fixed size, never wraps, always visible */
+.card-badge {
+flex-shrink: 0;
+font-size: 10px;
+font-family: ‘JetBrains Mono’, monospace;
+padding: 4px 9px;
+border-radius: 20px;
+white-space: nowrap;
+background: rgba(79,142,247,0.15);
+color: var(–accent);
+border: 1px solid rgba(79,142,247,0.3);
+line-height: 1.2;
+}
+.card-badge.current {
+background: rgba(247,95,95,0.15);
+color: var(–danger);
+border-color: rgba(247,95,95,0.3);
+}
+
+/* Fields grid */
+.card-fields {
+display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+}
+.field { display: flex; flex-direction: column; gap: 3px; }
+.field-label { font-size: 10px; color: var(–text3); text-transform: uppercase; letter-spacing: 0.06em; }
+.field-input {
+background: var(–surface2); border: 1px solid var(–border);
+border-radius: 8px; padding: 8px 10px; color: var(–text);
+font-family: ‘Noto Sans JP’, sans-serif; font-size: 13px;
+outline: none; width: 100%;
+transition: border-color 0.15s;
+}
+.field-input:focus { border-color: var(–accent); }
+.field-input.mono { font-family: ‘JetBrains Mono’, monospace; }
+
+/* Amount row */
+.amount-row {
+display: flex; align-items: center; gap: 8px;
+background: var(–surface2); border: 1px solid var(–border);
+border-radius: 10px; padding: 10px 14px;
+margin-top: 10px;
+transition: border-color 0.15s;
+}
+.amount-row:focus-within { border-color: var(–accent2); }
+.amount-label { font-size: 12px; color: var(–text2); white-space: nowrap; flex-shrink: 0; }
+.amount-yen { font-size: 14px; color: var(–text2); font-family: ‘JetBrains Mono’, monospace; flex-shrink: 0; }
+.amount-input {
+flex: 1; background: transparent; border: none; outline: none;
+color: var(–accent2); font-family: ‘JetBrains Mono’, monospace;
+font-size: 20px; font-weight: 600; text-align: right;
+}
+
+/* Total bar */
+.total-bar {
+background: var(–surface); border: 1px solid var(–border);
+border-radius: 14px; padding: 14px 16px; margin-top: 14px;
+display: flex; align-items: center; justify-content: space-between;
+}
+.total-bar-label { font-size: 12px; color: var(–text2); }
+.total-bar-value { font-family: ‘JetBrains Mono’, monospace; font-size: 20px; font-weight: 700; color: var(–accent2); }
+
+.help { font-size: 11px; color: var(–text3); margin-top: 16px; line-height: 1.7; text-align: center; }
+</style>
+
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-title">&#x1F4B3; 引き落とし管理</div>
+    <div class="header-sub">カード締め日・引き落とし一覧</div>
+  </div>
+  <div class="month-selector">
+    <button class="month-btn" id="prevBtn">&#9664;</button>
+    <div class="month-label" id="monthLabel">3月</div>
+    <button class="month-btn" id="nextBtn">&#9654;</button>
+  </div>
+</div>
+
+<div class="salary-card">
+  <div class="salary-row-inner">
+    <div class="salary-label">&#128181; 今月の手取り給料</div>
+    <div class="salary-input-wrap">
+      <span>&#xA5;</span>
+      <input type="number" id="salaryInput" value="240000" step="1000" inputmode="numeric">
+    </div>
+  </div>
+  <div class="salday-row">
+    <div class="salary-label">給料日</div>
+    <select id="salaryDay"></select>
+  </div>
+</div>
+
+<div class="summary-grid">
+  <div class="summary-card full">
+    <div class="s-label">今月の引き落とし合計（当月分）</div>
+    <div class="s-value danger" id="totalAmount">&#xA5;0</div>
+    <div class="s-note" id="totalNote">全カード合計 ¥0</div>
+  </div>
+  <div class="summary-card">
+    <div class="s-label">給料後の残高</div>
+    <div class="s-value ok" id="remainAmount">&#xA5;0</div>
+    <div class="s-note">手取り&#xFF0D;引き落とし</div>
+  </div>
+  <div class="summary-card">
+    <div class="s-label">当月引き落とし</div>
+    <div class="s-value" id="activeCount" style="color:var(--text)">0枚</div>
+    <div class="s-note" id="totalNote2">全6枚中</div>
+  </div>
+</div>
+
+<div class="section-title">&#x1F4C5; カード一覧</div>
+<div id="cardList"></div>
+
+<div class="total-bar">
+  <div class="total-bar-label">合計引き落とし（当月分）</div>
+  <div class="total-bar-value" id="totalRow">&#xA5;0</div>
+</div>
+
+<div class="help">&#9999; カード名・金額をタップして編集 &nbsp;|&nbsp; 翌月払いは引き落とし日に「翌」をつける（例: 翌10）</div>
+<div style="text-align:center;margin-top:12px">
+  <button id="resetBtn" style="background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text3);font-size:11px;padding:6px 14px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;">
+    &#x21BA; 初期データにリセット
+  </button>
+</div>
+
+<script>
+(function() {
+  var COLORS = ['#4f8ef7','#f7a94f','#4ff7a0','#f75f5f','#c97ef7','#f7e24f'];
+
+  var DEFAULT_CARDS = [
+    { name: '楽天カード',       closeDay: '末', payDay: '27',    bank: '住信SBI銀行', amount: 0, memo: '' },
+    { name: 'リクルートカード',   closeDay: '15', payDay: '翌10', bank: '住信SBI銀行', amount: 0, memo: '' },
+    { name: 'Amazonカード',     closeDay: '末', payDay: '26',    bank: '住信SBI銀行', amount: 0, memo: '' },
+    { name: 'ルミネカード',      closeDay: '5',  payDay: '翌4',   bank: '住信SBI銀行', amount: 0, memo: '' },
+    { name: 'オリコカード',      closeDay: '末', payDay: '翌27',  bank: '住信SBI銀行', amount: 0, memo: '' },
+    { name: 'ビックカメラカード', closeDay: '5',  payDay: '翌4',   bank: '住信SBI銀行', amount: 0, memo: '' }
+  ];
+
+  var cards;
+  try {
+    var saved = localStorage.getItem('cardData_v4');
+    cards = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_CARDS));
+  } catch(e) {
+    cards = JSON.parse(JSON.stringify(DEFAULT_CARDS));
+  }
+
+  var now = new Date();
+  var currentYear = now.getFullYear();
+  var currentMonth = now.getMonth();
+
+  function saveData() {
+    try { localStorage.setItem('cardData_v4', JSON.stringify(cards)); } catch(e) {}
+  }
+
+  function isCurrent(card) {
+    return String(card.payDay).indexOf('翌') === -1;
+  }
+
+  function updateMonthLabel() {
+    var months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+    document.getElementById('monthLabel').textContent = months[currentMonth];
+  }
+
+  function buildSalaryDay() {
+    var sel = document.getElementById('salaryDay');
+    for (var d = 1; d <= 31; d++) {
+      var o = document.createElement('option');
+      o.value = d;
+      o.textContent = d + '日';
+      if (d === 15) o.selected = true;
+      sel.appendChild(o);
+    }
+  }
+
+  function makeCardEl(idx) {
+    var card = cards[idx];
+    var cur = isCurrent(card);
+
+    var div = document.createElement('div');
+    div.className = 'card-item';
+
+    // Top: dot + name + badge
+    var top = document.createElement('div');
+    top.className = 'card-top';
+
+    var dot = document.createElement('span');
+    dot.className = 'color-dot';
+    dot.style.background = COLORS[idx] || '#999';
+
+    var nameInp = document.createElement('input');
+    nameInp.className = 'card-name-input';
+    nameInp.value = card.name;
+    nameInp.placeholder = 'カード名';
+    nameInp.dataset.idx = idx;
+    nameInp.addEventListener('input', function() {
+      cards[parseInt(this.dataset.idx)].name = this.value;
+      saveData(); updateSummary();
+    });
+
+    var badge = document.createElement('span');
+    badge.className = 'card-badge' + (cur ? ' current' : '');
+    badge.textContent = cur ? '当月払い' : '翌月払い';
+
+    top.appendChild(dot);
+    top.appendChild(nameInp);
+    top.appendChild(badge);
+    div.appendChild(top);
+
+    // Fields grid
+    var fields = document.createElement('div');
+    fields.className = 'card-fields';
+
+    function makeField(labelText, val, placeholder, cls, onChange) {
+      var f = document.createElement('div');
+      f.className = 'field';
+      var l = document.createElement('div');
+      l.className = 'field-label';
+      l.textContent = labelText;
+      var inp = document.createElement('input');
+      inp.className = 'field-input' + (cls ? ' ' + cls : '');
+      inp.value = val;
+      inp.placeholder = placeholder;
+      inp.dataset.idx = idx;
+      inp.addEventListener('input', onChange);
+      f.appendChild(l);
+      f.appendChild(inp);
+      fields.appendChild(f);
+    }
+
+    makeField('締め日', card.closeDay, '15 or 末', 'mono', function() {
+      cards[parseInt(this.dataset.idx)].closeDay = this.value;
+      saveData();
+    });
+
+    makeField('引き落とし日', card.payDay, '27 or 翌10', 'mono', function() {
+      cards[parseInt(this.dataset.idx)].payDay = this.value;
+      saveData();
+      renderCards();
+      updateSummary();
+    });
+
+    makeField('引き落とし口座', card.bank, '○○銀行', '', function() {
+      cards[parseInt(this.dataset.idx)].bank = this.value;
+      saveData();
+    });
+
+    makeField('メモ', card.memo, 'メモ', '', function() {
+      cards[parseInt(this.dataset.idx)].memo = this.value;
+      saveData();
+    });
+
+    div.appendChild(fields);
+
+    // Amount row
+    var amtRow = document.createElement('div');
+    amtRow.className = 'amount-row';
+    var amtLabel = document.createElement('div');
+    amtLabel.className = 'amount-label';
+    amtLabel.textContent = '今月の利用額';
+    var amtYen = document.createElement('span');
+    amtYen.className = 'amount-yen';
+    amtYen.textContent = '¥';
+    var amtInp = document.createElement('input');
+    amtInp.className = 'amount-input';
+    amtInp.type = 'number';
+    amtInp.inputMode = 'numeric';
+    amtInp.value = card.amount > 0 ? card.amount : '';
+    amtInp.placeholder = '0';
+    amtInp.dataset.idx = idx;
+    amtInp.addEventListener('input', function() {
+      cards[parseInt(this.dataset.idx)].amount = Number(this.value) || 0;
+      saveData();
+      updateSummary();
+    });
+    amtRow.appendChild(amtLabel);
+    amtRow.appendChild(amtYen);
+    amtRow.appendChild(amtInp);
+    div.appendChild(amtRow);
+
+    return div;
+  }
+
+  function renderCards() {
+    var list = document.getElementById('cardList');
+    list.innerHTML = '';
+    for (var i = 0; i < cards.length; i++) {
+      list.appendChild(makeCardEl(i));
+    }
+  }
+
+  function updateSummary() {
+    var salary = Number(document.getElementById('salaryInput').value) || 0;
+    var thisTotal = 0, allTotal = 0, thisCount = 0;
+    for (var i = 0; i < cards.length; i++) {
+      var a = cards[i].amount || 0;
+      allTotal += a;
+      if (isCurrent(cards[i])) { thisTotal += a; if (a > 0) thisCount++; }
+    }
+    var remain = salary - thisTotal;
+
+    document.getElementById('totalAmount').textContent = '\u00A5' + thisTotal.toLocaleString();
+    document.getElementById('totalNote').textContent = '\u5168\u30ab\u30fc\u30c9\u5408\u8a08 \u00A5' + allTotal.toLocaleString();
+    document.getElementById('remainAmount').textContent = '\u00A5' + remain.toLocaleString();
+    document.getElementById('remainAmount').className = 's-value ' + (remain >= 0 ? 'ok' : 'danger');
+    document.getElementById('activeCount').textContent = thisCount + '\u679a';
+    document.getElementById('totalNote2').textContent = '\u5168' + cards.length + '\u679a\u4e2d';
+    document.getElementById('totalRow').textContent = '\u00A5' + thisTotal.toLocaleString();
+  }
+
+  buildSalaryDay();
+  updateMonthLabel();
+  renderCards();
+  updateSummary();
+
+  document.getElementById('prevBtn').addEventListener('click', function() {
+    currentMonth--; if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+    updateMonthLabel();
+  });
+  document.getElementById('nextBtn').addEventListener('click', function() {
+    currentMonth++; if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+    updateMonthLabel();
+  });
+  document.getElementById('salaryInput').addEventListener('input', updateSummary);
+  document.getElementById('salaryDay').addEventListener('change', updateSummary);
+
+  document.getElementById('resetBtn').addEventListener('click', function() {
+    if (confirm('入力内容をリセットして初期データに戻しますか？')) {
+      try { localStorage.removeItem('cardData_v4'); } catch(e) {}
+      cards = JSON.parse(JSON.stringify(DEFAULT_CARDS));
+      renderCards();
+      updateSummary();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
