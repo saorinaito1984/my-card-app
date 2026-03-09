@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -7,88 +6,32 @@
 <title>カード引き落とし管理</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-body {
-font-family: -apple-system, ‘Hiragino Sans’, sans-serif;
-background: #f0f2f5;
-color: #111827;
-min-height: 100vh;
-padding: 0 0 80px;
-max-width: 480px;
-margin: 0 auto;
-}
-
+body { font-family: -apple-system, 'Hiragino Sans', sans-serif; background: #f0f2f5; color: #111827; min-height: 100vh; padding: 0 0 80px; max-width: 480px; margin: 0 auto; }
 /* Tab bar */
-.tabbar {
-display: flex;
-background: #fff;
-border-bottom: 1px solid #e5e7eb;
-position: sticky; top: 0; z-index: 10;
-}
-.tab {
-flex: 1; padding: 14px 8px; text-align: center;
-font-size: 13px; font-weight: 600; color: #9ca3af;
-cursor: pointer; border-bottom: 2px solid transparent;
-transition: all 0.15s;
-}
+.tabbar { display: flex; background: #fff; border-bottom: 1px solid #e5e7eb; position: sticky; top: 0; z-index: 10; }
+.tab { flex: 1; padding: 14px 8px; text-align: center; font-size: 13px; font-weight: 600; color: #9ca3af; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; }
 .tab.active { color: #2563eb; border-bottom-color: #2563eb; }
-
 /* Pages */
 .page { display: none; padding: 20px 16px; }
 .page.active { display: block; }
-
 /* Header */
-.header {
-display: flex; align-items: center;
-justify-content: space-between; margin-bottom: 20px;
-}
+.header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
 .header-title { font-size: 20px; font-weight: 800; }
 .header-sub { font-size: 11px; color: #6b7280; margin-top: 2px; }
-.month-box {
-display: flex; align-items: center; gap: 8px;
-background: #fff; border: 1px solid #e5e7eb;
-border-radius: 12px; padding: 8px 12px;
-box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-}
-.mbtn {
-width: 26px; height: 26px; border-radius: 6px;
-background: #f3f4f6; border: 1px solid #e5e7eb;
-color: #374151; font-size: 11px; cursor: pointer;
-display: flex; align-items: center; justify-content: center;
-}
+.month-box { display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 8px 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.mbtn { width: 26px; height: 26px; border-radius: 6px; background: #f3f4f6; border: 1px solid #e5e7eb; color: #374151; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 .mlabel { font-size: 13px; font-weight: 700; color: #111827; min-width: 80px; text-align: center; }
-
 /* White card */
-.wcard {
-background: #fff; border-radius: 16px;
-border: 1px solid #e5e7eb;
-box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-padding: 16px; margin-bottom: 12px;
-}
-
+.wcard { background: #fff; border-radius: 16px; border: 1px solid #e5e7eb; box-shadow: 0 1px 4px rgba(0,0,0,0.05); padding: 16px; margin-bottom: 12px; }
 /* Salary */
 .row { display: flex; align-items: center; gap: 10px; }
 .row + .row { margin-top: 10px; }
 .lbl { font-size: 12px; font-weight: 600; color: #6b7280; white-space: nowrap; }
-.input-box {
-flex: 1; display: flex; align-items: center; gap: 6px;
-background: #f9fafb; border: 1.5px solid #e5e7eb;
-border-radius: 10px; padding: 9px 12px;
-}
+.input-box { flex: 1; display: flex; align-items: center; gap: 6px; background: #f9fafb; border: 1.5px solid #e5e7eb; border-radius: 10px; padding: 9px 12px; }
 .input-box:focus-within { border-color: #2563eb; background: #eff6ff; }
 .input-box span { font-size: 14px; color: #9ca3af; flex-shrink: 0; }
-.input-box input {
-flex: 1; background: transparent; border: none; outline: none;
-font-size: 16px; font-weight: 700; color: #111827; text-align: right;
-min-width: 0; width: 0;
-}
-.sel-box {
-flex: 1; background: #f9fafb; border: 1.5px solid #e5e7eb;
-border-radius: 10px; padding: 9px 12px;
-font-size: 14px; color: #111827; outline: none;
-font-family: -apple-system, ‘Hiragino Sans’, sans-serif;
-}
-
+.input-box input { flex: 1; background: transparent; border: none; outline: none; font-size: 16px; font-weight: 700; color: #111827; text-align: right; min-width: 0; width: 0; }
+.sel-box { flex: 1; background: #f9fafb; border: 1.5px solid #e5e7eb; border-radius: 10px; padding: 9px 12px; font-size: 14px; color: #111827; outline: none; font-family: -apple-system, 'Hiragino Sans', sans-serif; }
 /* Summary */
 .sgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
 .sgrid .wcard { margin-bottom: 0; }
@@ -99,158 +42,70 @@ font-family: -apple-system, ‘Hiragino Sans’, sans-serif;
 .sval.green { color: #059669; }
 .sval.dark { color: #111827; }
 .snote { font-size: 11px; color: #9ca3af; margin-top: 4px; }
-
 .sec-lbl { font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
-
 /* Card item */
 .ci { margin-bottom: 12px; transition: opacity 0.2s, transform 0.2s; }
 .ci.dragging { opacity: 0.4; transform: scale(0.97); }
 .ci.drag-over { border: 2px dashed #2563eb; background: #eff6ff; }
 .ci-top { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
-.drag-handle {
-flex-shrink: 0; width: 24px; height: 24px;
-display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
-cursor: grab; opacity: 0.35; padding: 2px;
-}
+.drag-handle { flex-shrink: 0; width: 24px; height: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; cursor: grab; opacity: 0.35; padding: 2px; }
 .drag-handle:active { cursor: grabbing; }
 .drag-handle span { display: block; width: 16px; height: 2px; background: #6b7280; border-radius: 2px; }
 .cdot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-.cname {
-flex: 1; min-width: 0; background: transparent; border: none; outline: none;
-font-size: 16px; font-weight: 700; color: #111827;
-font-family: -apple-system, ‘Hiragino Sans’, sans-serif;
-}
+.cname { flex: 1; min-width: 0; background: transparent; border: none; outline: none; font-size: 16px; font-weight: 700; color: #111827; font-family: -apple-system, 'Hiragino Sans', sans-serif; }
 .cbadge { flex-shrink: 0; font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 20px; white-space: nowrap; }
 .cbadge.cur { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
 .cbadge.nxt { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
-
 .fgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .field { display: flex; flex-direction: column; gap: 4px; }
 .flbl { font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; }
-.finp {
-background: #f9fafb; border: 1.5px solid #e5e7eb;
-border-radius: 10px; padding: 9px 11px;
-font-size: 13px; color: #111827; outline: none; width: 100%;
-font-family: -apple-system, ‘Hiragino Sans’, sans-serif;
-transition: border-color 0.15s;
-}
+.finp { background: #f9fafb; border: 1.5px solid #e5e7eb; border-radius: 10px; padding: 9px 11px; font-size: 13px; color: #111827; outline: none; width: 100%; font-family: -apple-system, 'Hiragino Sans', sans-serif; transition: border-color 0.15s; }
 .finp:focus { border-color: #2563eb; background: #eff6ff; }
-
-.amtrow {
-display: flex; align-items: center; gap: 8px;
-background: #fffbeb; border: 2px solid #fde68a;
-border-radius: 12px; padding: 12px 14px; margin-top: 12px;
-overflow: hidden;
-}
+.amtrow { display: flex; align-items: center; gap: 8px; background: #fffbeb; border: 2px solid #fde68a; border-radius: 12px; padding: 12px 14px; margin-top: 12px; overflow: hidden; }
 .amtrow:focus-within { border-color: #f59e0b; }
 .amtlbl { font-size: 12px; font-weight: 700; color: #b45309; white-space: nowrap; flex-shrink: 0; }
 .amtyen { font-size: 16px; color: #b45309; flex-shrink: 0; }
-.amtinp {
-flex: 1; min-width: 0; background: transparent; border: none; outline: none;
-font-size: 22px; font-weight: 800; color: #b45309; text-align: right;
-}
-
+.amtinp { flex: 1; min-width: 0; background: transparent; border: none; outline: none; font-size: 22px; font-weight: 800; color: #b45309; text-align: right; }
 /* Save button */
-.savebtn {
-width: 100%; padding: 16px;
-background: linear-gradient(135deg, #1d4ed8, #2563eb);
-color: #fff; font-size: 15px; font-weight: 700;
-border: none; border-radius: 14px; cursor: pointer;
-box-shadow: 0 4px 14px rgba(37,99,235,0.3);
-margin-bottom: 12px;
-font-family: -apple-system, ‘Hiragino Sans’, sans-serif;
-}
+.savebtn { width: 100%; padding: 16px; background: linear-gradient(135deg, #1d4ed8, #2563eb); color: #fff; font-size: 15px; font-weight: 700; border: none; border-radius: 14px; cursor: pointer; box-shadow: 0 4px 14px rgba(37,99,235,0.3); margin-bottom: 12px; font-family: -apple-system, 'Hiragino Sans', sans-serif; }
 .savebtn:active { opacity: 0.85; }
-
 /* Total bar */
-.totalbar {
-background: linear-gradient(135deg, #1d4ed8, #2563eb);
-border-radius: 16px; padding: 18px 16px; margin-top: 4px;
-display: flex; align-items: center; justify-content: space-between;
-box-shadow: 0 4px 14px rgba(37,99,235,0.3); border: none;
-}
+.totalbar { background: linear-gradient(135deg, #1d4ed8, #2563eb); border-radius: 16px; padding: 18px 16px; margin-top: 4px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 14px rgba(37,99,235,0.3); border: none; }
 .tbarlbl { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.8); }
 .tbarval { font-size: 24px; font-weight: 800; color: #fff; }
-
 .help { font-size: 11px; color: #9ca3af; margin-top: 16px; text-align: center; line-height: 1.8; }
-.resetbtn {
-display: block; margin: 12px auto 0;
-background: transparent; border: 1px solid #e5e7eb;
-border-radius: 8px; color: #9ca3af; font-size: 11px;
-padding: 6px 16px; cursor: pointer;
-font-family: -apple-system, ‘Hiragino Sans’, sans-serif;
-}
-
-/* –– History page –– */
-.year-selector {
-display: flex; align-items: center; justify-content: center; gap: 12px;
-margin-bottom: 20px;
-}
-.ybtn {
-width: 32px; height: 32px; border-radius: 8px;
-background: #fff; border: 1px solid #e5e7eb;
-color: #374151; font-size: 12px; cursor: pointer;
-display: flex; align-items: center; justify-content: center;
-}
+.resetbtn { display: block; margin: 12px auto 0; background: transparent; border: 1px solid #e5e7eb; border-radius: 8px; color: #9ca3af; font-size: 11px; padding: 6px 16px; cursor: pointer; font-family: -apple-system, 'Hiragino Sans', sans-serif; }
+/* History page */
+.year-selector { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 20px; }
+.ybtn { width: 32px; height: 32px; border-radius: 8px; background: #fff; border: 1px solid #e5e7eb; color: #374151; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 .ylabel { font-size: 18px; font-weight: 800; color: #111827; }
-
-/* Annual summary */
 .annual-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
 .annual-cards .wcard { margin-bottom: 0; }
-
-/* Bar chart */
 .chart-wrap { margin-bottom: 20px; }
 .chart-title { font-size: 12px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 14px; }
 .bars { display: flex; align-items: flex-end; gap: 4px; height: 140px; }
 .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
-.bar-fill {
-width: 100%; border-radius: 5px 5px 0 0;
-background: linear-gradient(180deg, #3b82f6, #2563eb);
-min-height: 3px; transition: height 0.3s;
-position: relative; cursor: pointer;
-}
+.bar-fill { width: 100%; border-radius: 5px 5px 0 0; background: linear-gradient(180deg, #3b82f6, #2563eb); min-height: 3px; transition: height 0.3s; position: relative; cursor: pointer; }
 .bar-fill.current-month { background: linear-gradient(180deg, #f59e0b, #d97706); }
-.bar-fill .bar-tip {
-position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
-background: #1e293b; color: #fff; font-size: 9px; font-weight: 600;
-padding: 2px 5px; border-radius: 4px; white-space: nowrap; margin-bottom: 3px;
-display: none;
-}
+.bar-fill .bar-tip { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: #1e293b; color: #fff; font-size: 9px; font-weight: 600; padding: 2px 5px; border-radius: 4px; white-space: nowrap; margin-bottom: 3px; display: none; }
 .bar-fill:hover .bar-tip, .bar-fill.show-tip .bar-tip { display: block; }
-.bar-lbl { font-size: 9px; color: #9ca3af; font-weight: 600; }
-
-/* Monthly history list */
-.hist-item {
-display: flex; align-items: center; justify-content: space-between;
-padding: 12px 0; border-bottom: 1px solid #f3f4f6;
-}
+.hist-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f3f4f6; }
 .hist-item:last-child { border-bottom: none; }
 .hist-month { font-size: 13px; font-weight: 700; color: #374151; }
 .hist-sub { font-size: 11px; color: #9ca3af; margin-top: 2px; }
 .hist-amt { font-size: 16px; font-weight: 800; color: #2563eb; }
-.hist-del {
-background: transparent; border: 1px solid #fecaca;
-border-radius: 6px; color: #dc2626; font-size: 10px;
-padding: 4px 8px; cursor: pointer; margin-left: 10px;
-font-family: -apple-system, sans-serif;
-}
+.hist-del { background: transparent; border: 1px solid #fecaca; border-radius: 6px; color: #dc2626; font-size: 10px; padding: 4px 8px; cursor: pointer; margin-left: 10px; font-family: -apple-system, sans-serif; }
 .no-data { text-align: center; color: #9ca3af; font-size: 13px; padding: 40px 0; }
 </style>
-
 </head>
 <body>
-
-<!-- Tab bar -->
 
 <div class="tabbar">
   <div class="tab active" id="tab-home" onclick="switchTab('home')">💳 今月入力</div>
   <div class="tab" id="tab-history" onclick="switchTab('history')">📊 振り返り</div>
 </div>
 
-<!-- ===== HOME PAGE ===== -->
-
 <div class="page active" id="page-home">
-
   <div class="header">
     <div>
       <div class="header-title">💳 引き落とし管理</div>
@@ -266,10 +121,7 @@ font-family: -apple-system, sans-serif;
   <div class="wcard">
     <div class="row">
       <div class="lbl">💰 手取り給料</div>
-      <div class="input-box">
-        <span>¥</span>
-        <input type="number" id="salaryInput" value="240000" inputmode="numeric">
-      </div>
+      <div class="input-box"><span>¥</span><input type="number" id="salaryInput" value="240000" inputmode="numeric"></div>
     </div>
     <div class="row">
       <div class="lbl">給料日</div>
@@ -279,9 +131,9 @@ font-family: -apple-system, sans-serif;
 
   <div class="sgrid">
     <div class="wcard sfull">
-      <div class="slbl">今月の引き落とし合計（当月分）</div>
+      <div class="slbl">今月の引き落とし合計</div>
       <div class="sval red" id="totalAmount">¥0</div>
-      <div class="snote" id="totalNote">全カード合計 ¥0</div>
+      <div class="snote" id="totalNote">入力した全カードの合計</div>
     </div>
     <div class="wcard">
       <div class="slbl">給料後の残高</div>
@@ -291,7 +143,7 @@ font-family: -apple-system, sans-serif;
     <div class="wcard">
       <div class="slbl">当月引き落とし</div>
       <div class="sval dark" id="activeCount">0枚</div>
-      <div class="snote" id="totalNote2">全6枚中</div>
+      <div class="snote" id="totalNote2">支払い予定あり</div>
     </div>
   </div>
 
@@ -299,33 +151,21 @@ font-family: -apple-system, sans-serif;
   <div id="cardList"></div>
 
   <div class="totalbar">
-    <div class="tbarlbl">合計引き落とし（当月分）</div>
+    <div class="tbarlbl">合計引き落とし金額</div>
     <div class="tbarval" id="totalRow">¥0</div>
   </div>
 
-  <!-- Save button -->
-
-  <div style="margin-top:16px">
-    <button class="savebtn" id="saveMonthBtn">💾 今月のデータを保存する</button>
-  </div>
-
+  <div style="margin-top:16px"><button class="savebtn" id="saveMonthBtn">💾 今月のデータを保存する</button></div>
   <div class="help">✏️ 各項目をタップして編集 | 翌月払いは「翌10」のように入力</div>
   <button class="resetbtn" id="resetBtn">↺ 初期データにリセット</button>
-
-</div><!-- /page-home -->
-
-<!-- ===== HISTORY PAGE ===== -->
+</div>
 
 <div class="page" id="page-history">
-
   <div class="year-selector">
     <button class="ybtn" id="prevYear">&#9664;</button>
     <div class="ylabel" id="yearLabel">2026年</div>
     <button class="ybtn" id="nextYear">&#9654;</button>
   </div>
-
-  <!-- Annual summary -->
-
   <div class="annual-cards">
     <div class="wcard">
       <div class="slbl">年間合計支出</div>
@@ -338,29 +178,21 @@ font-family: -apple-system, sans-serif;
       <div class="snote">引き落とし平均</div>
     </div>
   </div>
-
-  <!-- Bar chart -->
-
   <div class="wcard chart-wrap">
     <div class="chart-title">月別引き落とし合計</div>
     <div class="bars" id="barChart"></div>
     <div style="display:flex;gap:4px;margin-top:6px" id="barLabels"></div>
   </div>
-
-  <!-- Monthly list -->
-
   <div class="wcard">
     <div class="slbl" style="margin-bottom:8px">月別履歴</div>
     <div id="histList"><div class="no-data">まだデータがありません<br>今月入力タブで「今月を保存」してください</div></div>
   </div>
-
-</div><!-- /page-history -->
+</div>
 
 <script>
 (function() {
   var COLORS = ['#2563eb','#d97706','#059669','#dc2626','#7c3aed','#db2777'];
   var MONTHS = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
-
   var DEF = [
     { name: '楽天カード',       closeDay: '末', payDay: '27',   bank: '住信SBI銀行', amount: 0, memo: '' },
     { name: 'リクルートカード',   closeDay: '15', payDay: '翌10', bank: '住信SBI銀行', amount: 0, memo: '' },
@@ -370,27 +202,35 @@ font-family: -apple-system, sans-serif;
     { name: 'ビックカメラカード', closeDay: '5',  payDay: '翌4',  bank: '住信SBI銀行', amount: 0, memo: '' }
   ];
 
-  // Load cards
   var cards;
   try { var s = localStorage.getItem('card_v5'); cards = s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEF)); }
   catch(e) { cards = JSON.parse(JSON.stringify(DEF)); }
 
-  // Load history: { "2026-03": { total, salary, cards: [...] }, ... }
   var history;
   try { var hs = localStorage.getItem('card_history_v1'); history = hs ? JSON.parse(hs) : {}; }
   catch(e) { history = {}; }
 
   var now = new Date();
-  var cy = now.getFullYear(), cm = now.getMonth();
-  var hy = now.getFullYear(); // history year
+  var cy = now.getFullYear(), cm = now.getMonth(), hy = now.getFullYear();
 
   function save() { try { localStorage.setItem('card_v5', JSON.stringify(cards)); } catch(e) {} }
   function saveHistory() { try { localStorage.setItem('card_history_v1', JSON.stringify(history)); } catch(e) {} }
-  function isCur(c) { return String(c.payDay).indexOf('翌') === -1; }
   function fmt(n) { return '¥' + Math.round(n).toLocaleString(); }
   function hkey(y, m) { return y + '-' + ('0'+(m+1)).slice(-2); }
 
-  // Tab switching
+  // ★修正箇所：引き落とし日（文字）から数字だけを取り出す
+  function getNum(str) {
+    var m = String(str).match(/\d+/);
+    return m ? parseInt(m[0], 10) : 0;
+  }
+
+  // ★修正箇所：給料日を基準に、当月中に落ちるか、翌月にまたがるかを判定
+  function getPayTiming(c) {
+    var salDay = Number(document.getElementById('salaryDay').value) || 15;
+    var pDay = getNum(c.payDay);
+    return pDay >= salDay; 
+  }
+
   window.switchTab = function(tab) {
     document.getElementById('page-home').classList.toggle('active', tab === 'home');
     document.getElementById('page-history').classList.toggle('active', tab === 'history');
@@ -399,26 +239,24 @@ font-family: -apple-system, sans-serif;
     if (tab === 'history') renderHistory();
   };
 
-  function updateMonthLabel() {
-    document.getElementById('monthLabel').textContent = cy + '年' + MONTHS[cm];
-  }
+  function updateMonthLabel() { document.getElementById('monthLabel').textContent = cy + '年' + MONTHS[cm]; }
 
   function buildSalDay() {
     var sel = document.getElementById('salaryDay');
     for (var d = 1; d <= 31; d++) {
       var o = document.createElement('option');
       o.value = d; o.textContent = d + '日';
-      if (d === 15) o.selected = true;
+      if (d === 15) o.selected = true; // デフォルト15日
       sel.appendChild(o);
     }
   }
 
   function makeCard(idx) {
-    var c = cards[idx], cur = isCur(c);
+    var c = cards[idx];
+    var isSameMonth = getPayTiming(c); // バッジ表示を給料日基準に変更
     var wrap = document.createElement('div'); wrap.className = 'wcard ci';
     wrap.dataset.idx = idx;
 
-    // Drag handle
     var handle = document.createElement('div'); handle.className = 'drag-handle';
     handle.innerHTML = '<span></span><span></span><span></span>';
 
@@ -427,8 +265,9 @@ font-family: -apple-system, sans-serif;
     var ni = document.createElement('input'); ni.className = 'cname';
     ni.value = c.name; ni.placeholder = 'カード名'; ni.dataset.i = idx;
     ni.addEventListener('input', function() { cards[+this.dataset.i].name = this.value; save(); updateSummary(); });
-    var badge = document.createElement('span'); badge.className = 'cbadge ' + (cur ? 'cur' : 'nxt');
-    badge.textContent = cur ? '当月払い' : '翌月払い';
+    
+    var badge = document.createElement('span'); badge.className = 'cbadge ' + (isSameMonth ? 'cur' : 'nxt');
+    badge.textContent = isSameMonth ? '当月払い' : '翌月払い';
     top.appendChild(handle); top.appendChild(dot); top.appendChild(ni); top.appendChild(badge);
     wrap.appendChild(top);
 
@@ -465,15 +304,11 @@ font-family: -apple-system, sans-serif;
     initDrag();
   }
 
-  // Touch-based drag & drop for mobile
   function initDrag() {
     var list = document.getElementById('cardList');
-    var dragEl = null, startY = 0, startIdx = 0, clone = null;
-
+    var dragEl = null, startY = 0, startIdx = 0;
     function getItems() { return list.querySelectorAll('.ci'); }
-
     function getIdxFromEl(el) { return parseInt(el.dataset.idx); }
-
     function getElAtY(y) {
       var items = getItems();
       for (var i = 0; i < items.length; i++) {
@@ -486,181 +321,131 @@ font-family: -apple-system, sans-serif;
     list.addEventListener('touchstart', function(e) {
       var handle = e.target.closest('.drag-handle');
       if (!handle) return;
-      dragEl = handle.closest('.ci');
-      startIdx = getIdxFromEl(dragEl);
-      startY = e.touches[0].clientY;
-      dragEl.classList.add('dragging');
-      e.preventDefault();
+      dragEl = handle.closest('.ci'); startIdx = getIdxFromEl(dragEl);
+      startY = e.touches[0].clientY; dragEl.classList.add('dragging'); e.preventDefault();
     }, { passive: false });
 
     list.addEventListener('touchmove', function(e) {
       if (!dragEl) return;
-      e.preventDefault();
-      var y = e.touches[0].clientY;
-      var over = getElAtY(y);
+      e.preventDefault(); var y = e.touches[0].clientY; var over = getElAtY(y);
       getItems().forEach(function(el) { el.classList.remove('drag-over'); });
       if (over && over !== dragEl) over.classList.add('drag-over');
     }, { passive: false });
 
     list.addEventListener('touchend', function(e) {
       if (!dragEl) return;
-      var y = e.changedTouches[0].clientY;
-      var over = getElAtY(y);
+      var y = e.changedTouches[0].clientY; var over = getElAtY(y);
       getItems().forEach(function(el) { el.classList.remove('drag-over'); });
       dragEl.classList.remove('dragging');
-
       if (over && over !== dragEl) {
         var toIdx = getIdxFromEl(over);
         var moved = cards.splice(startIdx, 1)[0];
         cards.splice(toIdx, 0, moved);
-        save();
-        renderCards();
-        updateSummary();
+        save(); renderCards(); updateSummary();
       }
       dragEl = null;
     });
   }
 
+  // ★修正箇所：入力された金額はすべて「今月の給料から引く」ように変更
   function calcTotals() {
     var sal = Number(document.getElementById('salaryInput').value) || 0;
-    var tt = 0, at = 0, tc = 0;
+    var tt = 0, tc = 0;
     for (var i = 0; i < cards.length; i++) {
-      var a = cards[i].amount || 0; at += a;
-      if (isCur(cards[i])) { tt += a; if (a > 0) tc++; }
+      var a = cards[i].amount || 0; 
+      tt += a; // すべての金額を合計に足す
+      if (a > 0) tc++;
     }
-    return { salary: sal, thisTotal: tt, allTotal: at, count: tc, remain: sal - tt };
+    return { salary: sal, thisTotal: tt, count: tc, remain: sal - tt };
   }
 
   function updateSummary() {
     var t = calcTotals();
     document.getElementById('totalAmount').textContent = fmt(t.thisTotal);
-    document.getElementById('totalNote').textContent = '全カード合計 ' + fmt(t.allTotal);
     document.getElementById('remainAmount').textContent = fmt(t.remain);
     document.getElementById('remainAmount').className = 'sval ' + (t.remain >= 0 ? 'green' : 'red');
     document.getElementById('activeCount').textContent = t.count + '枚';
-    document.getElementById('totalNote2').textContent = '全' + cards.length + '枚中';
     document.getElementById('totalRow').textContent = fmt(t.thisTotal);
   }
 
-  // Save this month
   document.getElementById('saveMonthBtn').addEventListener('click', function() {
     var t = calcTotals();
     var key = hkey(cy, cm);
     history[key] = {
-      year: cy, month: cm,
-      salary: t.salary,
-      total: t.thisTotal,
-      allTotal: t.allTotal,
-      cards: cards.map(function(c) { return { name: c.name, amount: c.amount, isCur: isCur(c) }; })
+      year: cy, month: cm, salary: t.salary, total: t.thisTotal,
+      cards: cards.map(function(c) { return { name: c.name, amount: c.amount }; })
     };
     saveHistory();
     alert(cy + '年' + MONTHS[cm] + 'のデータを保存しました！');
   });
 
-  // ---- History rendering ----
   function renderHistory() {
     document.getElementById('yearLabel').textContent = hy + '年';
-    // Collect this year's data
-    var yearData = [];
-    var annTotal = 0, annCount = 0;
+    var yearData = [], annTotal = 0, annCount = 0;
     for (var m = 0; m < 12; m++) {
-      var k = hkey(hy, m);
-      var d = history[k] || null;
+      var d = history[hkey(hy, m)] || null;
       yearData.push(d);
       if (d) { annTotal += d.total; annCount++; }
     }
-
     document.getElementById('annualTotal').textContent = fmt(annTotal);
     document.getElementById('annualMonths').textContent = annCount + 'ヶ月分のデータ';
     document.getElementById('annualAvg').textContent = annCount > 0 ? fmt(annTotal / annCount) : '¥0';
-
-    // Bar chart
-    renderBarChart(yearData);
-
-    // Monthly list
-    renderHistList(yearData);
+    renderBarChart(yearData); renderHistList(yearData);
   }
 
   function renderBarChart(yearData) {
-    var chart = document.getElementById('barChart');
-    var labels = document.getElementById('barLabels');
+    var chart = document.getElementById('barChart'), labels = document.getElementById('barLabels');
     chart.innerHTML = ''; labels.innerHTML = '';
-
-    var max = 0;
+    var max = 1;
     for (var i = 0; i < 12; i++) { if (yearData[i] && yearData[i].total > max) max = yearData[i].total; }
-    if (max === 0) max = 1;
-
     var nowKey = hkey(now.getFullYear(), now.getMonth());
-
     for (var m = 0; m < 12; m++) {
-      var d = yearData[m];
-      var col = document.createElement('div'); col.className = 'bar-col';
+      var d = yearData[m], col = document.createElement('div'); col.className = 'bar-col';
       var fill = document.createElement('div'); fill.className = 'bar-fill';
-      var isNow = hkey(hy, m) === nowKey;
-      if (isNow) fill.classList.add('current-month');
-      var pct = d ? Math.max((d.total / max) * 100, 3) : 3;
-      fill.style.height = pct + '%';
+      if (hkey(hy, m) === nowKey) fill.classList.add('current-month');
+      fill.style.height = (d ? Math.max((d.total / max) * 100, 3) : 3) + '%';
       fill.style.opacity = d ? '1' : '0.2';
-
       if (d) {
-        var tip = document.createElement('div'); tip.className = 'bar-tip';
-        tip.textContent = fmt(d.total);
+        var tip = document.createElement('div'); tip.className = 'bar-tip'; tip.textContent = fmt(d.total);
         fill.appendChild(tip);
-        fill.addEventListener('click', function(el, tip2) {
-          return function() { el.classList.toggle('show-tip'); };
-        }(fill, tip));
+        fill.addEventListener('click', function(el) { return function() { el.classList.toggle('show-tip'); }; }(fill));
       }
-
-      col.appendChild(fill);
-      chart.appendChild(col);
-
-      // Label
-      var lbl = document.createElement('div');
-      lbl.style.cssText = 'flex:1;text-align:center;font-size:9px;color:#9ca3af;font-weight:600';
-      lbl.textContent = (m + 1) + '月';
-      labels.appendChild(lbl);
+      col.appendChild(fill); chart.appendChild(col);
+      var lbl = document.createElement('div'); lbl.style.cssText = 'flex:1;text-align:center;font-size:9px;color:#9ca3af;font-weight:600';
+      lbl.textContent = (m + 1) + '月'; labels.appendChild(lbl);
     }
   }
 
   function renderHistList(yearData) {
-    var list = document.getElementById('histList'); list.innerHTML = '';
-    var hasData = false;
+    var list = document.getElementById('histList'); list.innerHTML = ''; var hasData = false;
     for (var m = 11; m >= 0; m--) {
-      var d = yearData[m];
-      if (!d) continue;
-      hasData = true;
-      var item = document.createElement('div'); item.className = 'hist-item';
+      var d = yearData[m]; if (!d) continue;
+      hasData = true; var item = document.createElement('div'); item.className = 'hist-item';
       var left = document.createElement('div');
       var mn = document.createElement('div'); mn.className = 'hist-month'; mn.textContent = hy + '年' + MONTHS[m];
-      var sub = document.createElement('div'); sub.className = 'hist-sub';
-      sub.textContent = '手取り ' + fmt(d.salary) + '　残高 ' + fmt(d.salary - d.total);
+      var sub = document.createElement('div'); sub.className = 'hist-sub'; sub.textContent = '手取り ' + fmt(d.salary) + '　残高 ' + fmt(d.salary - d.total);
       left.appendChild(mn); left.appendChild(sub);
       var right = document.createElement('div'); right.style.cssText = 'display:flex;align-items:center;gap:6px';
       var amt = document.createElement('div'); amt.className = 'hist-amt'; amt.textContent = fmt(d.total);
       var del = document.createElement('button'); del.className = 'hist-del'; del.textContent = '削除';
-      (function(key) {
-        del.addEventListener('click', function() {
-          if (confirm('削除しますか？')) { delete history[key]; saveHistory(); renderHistory(); }
-        });
-      })(hkey(hy, m));
+      (function(key) { del.addEventListener('click', function() { if (confirm('削除しますか？')) { delete history[key]; saveHistory(); renderHistory(); } }); })(hkey(hy, m));
       right.appendChild(amt); right.appendChild(del);
-      item.appendChild(left); item.appendChild(right);
-      list.appendChild(item);
+      item.appendChild(left); item.appendChild(right); list.appendChild(item);
     }
-    if (!hasData) {
-      list.innerHTML = '<div class="no-data">この年のデータはありません</div>';
-    }
+    if (!hasData) list.innerHTML = '<div class="no-data">この年のデータはありません</div>';
   }
 
-  // Year navigation
   document.getElementById('prevYear').addEventListener('click', function() { hy--; renderHistory(); });
   document.getElementById('nextYear').addEventListener('click', function() { hy++; renderHistory(); });
-
-  // Month navigation
   document.getElementById('prevBtn').addEventListener('click', function() { cm--; if (cm < 0) { cm = 11; cy--; } updateMonthLabel(); });
   document.getElementById('nextBtn').addEventListener('click', function() { cm++; if (cm > 11) { cm = 0; cy++; } updateMonthLabel(); });
   document.getElementById('salaryInput').addEventListener('input', updateSummary);
-  document.getElementById('salaryDay').addEventListener('change', updateSummary);
+  
+  // ★修正箇所：給料日を変えたら、バッジの表示も再計算するようにしました
+  document.getElementById('salaryDay').addEventListener('change', function() {
+    renderCards();
+    updateSummary();
+  });
 
   document.getElementById('resetBtn').addEventListener('click', function() {
     if (confirm('カードデータをリセットしますか？\n（保存済み履歴は消えません）')) {
@@ -670,10 +455,7 @@ font-family: -apple-system, sans-serif;
     }
   });
 
-  buildSalDay();
-  updateMonthLabel();
-  renderCards();
-  updateSummary();
+  buildSalDay(); updateMonthLabel(); renderCards(); updateSummary();
 })();
 </script>
 
