@@ -103,8 +103,17 @@ font-family: -apple-system, ‘Hiragino Sans’, sans-serif;
 .sec-lbl { font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
 
 /* Card item */
-.ci { margin-bottom: 12px; }
+.ci { margin-bottom: 12px; transition: opacity 0.2s, transform 0.2s; }
+.ci.dragging { opacity: 0.4; transform: scale(0.97); }
+.ci.drag-over { border: 2px dashed #2563eb; background: #eff6ff; }
 .ci-top { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+.drag-handle {
+flex-shrink: 0; width: 24px; height: 24px;
+display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+cursor: grab; opacity: 0.35; padding: 2px;
+}
+.drag-handle:active { cursor: grabbing; }
+.drag-handle span { display: block; width: 16px; height: 2px; background: #6b7280; border-radius: 2px; }
 .cdot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 .cname {
 flex: 1; min-width: 0; background: transparent; border: none; outline: none;
@@ -407,6 +416,12 @@ font-family: -apple-system, sans-serif;
   function makeCard(idx) {
     var c = cards[idx], cur = isCur(c);
     var wrap = document.createElement('div'); wrap.className = 'wcard ci';
+    wrap.dataset.idx = idx;
+
+    // Drag handle
+    var handle = document.createElement('div'); handle.className = 'drag-handle';
+    handle.innerHTML = '<span></span><span></span><span></span>';
+
     var top = document.createElement('div'); top.className = 'ci-top';
     var dot = document.createElement('span'); dot.className = 'cdot'; dot.style.background = COLORS[idx] || '#999';
     var ni = document.createElement('input'); ni.className = 'cname';
@@ -414,7 +429,7 @@ font-family: -apple-system, sans-serif;
     ni.addEventListener('input', function() { cards[+this.dataset.i].name = this.value; save(); updateSummary(); });
     var badge = document.createElement('span'); badge.className = 'cbadge ' + (cur ? 'cur' : 'nxt');
     badge.textContent = cur ? '当月払い' : '翌月払い';
-    top.appendChild(dot); top.appendChild(ni); top.appendChild(badge);
+    top.appendChild(handle); top.appendChild(dot); top.appendChild(ni); top.appendChild(badge);
     wrap.appendChild(top);
 
     var fg = document.createElement('div'); fg.className = 'fgrid';
@@ -447,6 +462,63 @@ font-family: -apple-system, sans-serif;
   function renderCards() {
     var list = document.getElementById('cardList'); list.innerHTML = '';
     for (var i = 0; i < cards.length; i++) list.appendChild(makeCard(i));
+    initDrag();
+  }
+
+  // Touch-based drag & drop for mobile
+  function initDrag() {
+    var list = document.getElementById('cardList');
+    var dragEl = null, startY = 0, startIdx = 0, clone = null;
+
+    function getItems() { return list.querySelectorAll('.ci'); }
+
+    function getIdxFromEl(el) { return parseInt(el.dataset.idx); }
+
+    function getElAtY(y) {
+      var items = getItems();
+      for (var i = 0; i < items.length; i++) {
+        var r = items[i].getBoundingClientRect();
+        if (y >= r.top && y <= r.bottom) return items[i];
+      }
+      return null;
+    }
+
+    list.addEventListener('touchstart', function(e) {
+      var handle = e.target.closest('.drag-handle');
+      if (!handle) return;
+      dragEl = handle.closest('.ci');
+      startIdx = getIdxFromEl(dragEl);
+      startY = e.touches[0].clientY;
+      dragEl.classList.add('dragging');
+      e.preventDefault();
+    }, { passive: false });
+
+    list.addEventListener('touchmove', function(e) {
+      if (!dragEl) return;
+      e.preventDefault();
+      var y = e.touches[0].clientY;
+      var over = getElAtY(y);
+      getItems().forEach(function(el) { el.classList.remove('drag-over'); });
+      if (over && over !== dragEl) over.classList.add('drag-over');
+    }, { passive: false });
+
+    list.addEventListener('touchend', function(e) {
+      if (!dragEl) return;
+      var y = e.changedTouches[0].clientY;
+      var over = getElAtY(y);
+      getItems().forEach(function(el) { el.classList.remove('drag-over'); });
+      dragEl.classList.remove('dragging');
+
+      if (over && over !== dragEl) {
+        var toIdx = getIdxFromEl(over);
+        var moved = cards.splice(startIdx, 1)[0];
+        cards.splice(toIdx, 0, moved);
+        save();
+        renderCards();
+        updateSummary();
+      }
+      dragEl = null;
+    });
   }
 
   function calcTotals() {
