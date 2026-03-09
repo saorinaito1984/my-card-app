@@ -143,7 +143,7 @@ body { font-family: -apple-system, 'Hiragino Sans', sans-serif; background: #f0f
     <div class="wcard">
       <div class="slbl">当月引き落とし</div>
       <div class="sval dark" id="activeCount">0枚</div>
-      <div class="snote" id="totalNote2">支払い予定あり</div>
+      <div class="snote" id="totalNote2">全7枚中</div>
     </div>
   </div>
 
@@ -191,19 +191,23 @@ body { font-family: -apple-system, 'Hiragino Sans', sans-serif; background: #f0f
 
 <script>
 (function() {
-  var COLORS = ['#2563eb','#d97706','#059669','#dc2626','#7c3aed','#db2777'];
+  var COLORS = ['#2563eb','#d97706','#059669','#dc2626','#7c3aed','#db2777', '#0891b2'];
   var MONTHS = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  
+  // ★and STカードに修正しました
   var DEF = [
     { name: '楽天カード',       closeDay: '末', payDay: '27',   bank: '住信SBI銀行', amount: 0, memo: '' },
     { name: 'リクルートカード',   closeDay: '15', payDay: '翌10', bank: '住信SBI銀行', amount: 0, memo: '' },
     { name: 'Amazonカード',     closeDay: '末', payDay: '26',   bank: '住信SBI銀行', amount: 0, memo: '' },
     { name: 'ルミネカード',      closeDay: '5',  payDay: '翌4',  bank: '住信SBI銀行', amount: 0, memo: '' },
     { name: 'オリコカード',      closeDay: '末', payDay: '翌27', bank: '住信SBI銀行', amount: 0, memo: '' },
-    { name: 'ビックカメラカード', closeDay: '5',  payDay: '翌4',  bank: '住信SBI銀行', amount: 0, memo: '' }
+    { name: 'ビックカメラカード', closeDay: '5',  payDay: '翌4',  bank: '住信SBI銀行', amount: 0, memo: '' },
+    { name: 'and STカード',     closeDay: '末', payDay: '翌々月', bank: '住信SBI銀行', amount: 0, memo: '' }
   ];
 
   var cards;
-  try { var s = localStorage.getItem('card_v5'); cards = s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEF)); }
+  // ★バージョンを v7 に変更して自動で反映されるようにしました
+  try { var s = localStorage.getItem('card_v7'); cards = s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEF)); }
   catch(e) { cards = JSON.parse(JSON.stringify(DEF)); }
 
   var history;
@@ -213,18 +217,16 @@ body { font-family: -apple-system, 'Hiragino Sans', sans-serif; background: #f0f
   var now = new Date();
   var cy = now.getFullYear(), cm = now.getMonth(), hy = now.getFullYear();
 
-  function save() { try { localStorage.setItem('card_v5', JSON.stringify(cards)); } catch(e) {} }
+  function save() { try { localStorage.setItem('card_v7', JSON.stringify(cards)); } catch(e) {} }
   function saveHistory() { try { localStorage.setItem('card_history_v1', JSON.stringify(history)); } catch(e) {} }
   function fmt(n) { return '¥' + Math.round(n).toLocaleString(); }
   function hkey(y, m) { return y + '-' + ('0'+(m+1)).slice(-2); }
 
-  // ★修正箇所：引き落とし日（文字）から数字だけを取り出す
   function getNum(str) {
     var m = String(str).match(/\d+/);
     return m ? parseInt(m[0], 10) : 0;
   }
 
-  // ★修正箇所：給料日を基準に、当月中に落ちるか、翌月にまたがるかを判定
   function getPayTiming(c) {
     var salDay = Number(document.getElementById('salaryDay').value) || 15;
     var pDay = getNum(c.payDay);
@@ -253,7 +255,7 @@ body { font-family: -apple-system, 'Hiragino Sans', sans-serif; background: #f0f
 
   function makeCard(idx) {
     var c = cards[idx];
-    var isSameMonth = getPayTiming(c); // バッジ表示を給料日基準に変更
+    var isSameMonth = getPayTiming(c);
     var wrap = document.createElement('div'); wrap.className = 'wcard ci';
     wrap.dataset.idx = idx;
 
@@ -266,8 +268,17 @@ body { font-family: -apple-system, 'Hiragino Sans', sans-serif; background: #f0f
     ni.value = c.name; ni.placeholder = 'カード名'; ni.dataset.i = idx;
     ni.addEventListener('input', function() { cards[+this.dataset.i].name = this.value; save(); updateSummary(); });
     
-    var badge = document.createElement('span'); badge.className = 'cbadge ' + (isSameMonth ? 'cur' : 'nxt');
-    badge.textContent = isSameMonth ? '当月払い' : '翌月払い';
+    var badgeText = '翌月払い';
+    var badgeClass = 'nxt';
+    if (String(c.payDay).indexOf('翌々') !== -1) {
+      badgeText = '翌々月払い';
+    } else if (isSameMonth) {
+      badgeText = '当月払い';
+      badgeClass = 'cur';
+    }
+
+    var badge = document.createElement('span'); badge.className = 'cbadge ' + badgeClass;
+    badge.textContent = badgeText;
     top.appendChild(handle); top.appendChild(dot); top.appendChild(ni); top.appendChild(badge);
     wrap.appendChild(top);
 
@@ -281,7 +292,7 @@ body { font-family: -apple-system, 'Hiragino Sans', sans-serif; background: #f0f
       f.appendChild(l); f.appendChild(inp); fg.appendChild(f);
     }
     mf('締め日', c.closeDay, '15 or 末', function() { cards[+this.dataset.i].closeDay = this.value; save(); });
-    mf('引き落とし日', c.payDay, '27 or 翌10', function() { cards[+this.dataset.i].payDay = this.value; save(); renderCards(); updateSummary(); });
+    mf('引き落とし日', c.payDay, '27 or 翌10 or 翌々月', function() { cards[+this.dataset.i].payDay = this.value; save(); renderCards(); updateSummary(); });
     mf('引き落とし口座', c.bank, '○○銀行', function() { cards[+this.dataset.i].bank = this.value; save(); });
     mf('メモ', c.memo, 'メモ', function() { cards[+this.dataset.i].memo = this.value; save(); });
     wrap.appendChild(fg);
@@ -347,13 +358,12 @@ body { font-family: -apple-system, 'Hiragino Sans', sans-serif; background: #f0f
     });
   }
 
-  // ★修正箇所：入力された金額はすべて「今月の給料から引く」ように変更
   function calcTotals() {
     var sal = Number(document.getElementById('salaryInput').value) || 0;
     var tt = 0, tc = 0;
     for (var i = 0; i < cards.length; i++) {
       var a = cards[i].amount || 0; 
-      tt += a; // すべての金額を合計に足す
+      tt += a; 
       if (a > 0) tc++;
     }
     return { salary: sal, thisTotal: tt, count: tc, remain: sal - tt };
@@ -365,6 +375,7 @@ body { font-family: -apple-system, 'Hiragino Sans', sans-serif; background: #f0f
     document.getElementById('remainAmount').textContent = fmt(t.remain);
     document.getElementById('remainAmount').className = 'sval ' + (t.remain >= 0 ? 'green' : 'red');
     document.getElementById('activeCount').textContent = t.count + '枚';
+    document.getElementById('totalNote2').textContent = '全' + cards.length + '枚中';
     document.getElementById('totalRow').textContent = fmt(t.thisTotal);
   }
 
@@ -441,7 +452,6 @@ body { font-family: -apple-system, 'Hiragino Sans', sans-serif; background: #f0f
   document.getElementById('nextBtn').addEventListener('click', function() { cm++; if (cm > 11) { cm = 0; cy++; } updateMonthLabel(); });
   document.getElementById('salaryInput').addEventListener('input', updateSummary);
   
-  // ★修正箇所：給料日を変えたら、バッジの表示も再計算するようにしました
   document.getElementById('salaryDay').addEventListener('change', function() {
     renderCards();
     updateSummary();
@@ -449,7 +459,7 @@ body { font-family: -apple-system, 'Hiragino Sans', sans-serif; background: #f0f
 
   document.getElementById('resetBtn').addEventListener('click', function() {
     if (confirm('カードデータをリセットしますか？\n（保存済み履歴は消えません）')) {
-      try { localStorage.removeItem('card_v5'); } catch(e) {}
+      try { localStorage.removeItem('card_v7'); } catch(e) {}
       cards = JSON.parse(JSON.stringify(DEF));
       renderCards(); updateSummary();
     }
