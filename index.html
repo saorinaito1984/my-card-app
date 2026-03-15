@@ -38,25 +38,24 @@ body { font-family: -apple-system, 'Hiragino Sans', sans-serif; background: #f0f
 .sval.dark { color: #111827; }
 .snote { font-size: 11px; color: #9ca3af; margin-top: 4px; }
 .sec-lbl { font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
-.ci { margin-bottom: 12px; transition: opacity 0.2s, transform 0.2s; }
-.ci.dragging { opacity: 0.4; transform: scale(0.97); }
-.ci.drag-over { border: 2px dashed #2563eb; background: #eff6ff; }
+.ci { margin-bottom: 12px; }
 .ci-top { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
-.drag-handle { flex-shrink: 0; width: 24px; height: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; cursor: grab; opacity: 0.35; padding: 2px; }
-.drag-handle:active { cursor: grabbing; }
-.drag-handle span { display: block; width: 16px; height: 2px; background: #6b7280; border-radius: 2px; }
+.sort-btns { display: flex; flex-direction: column; gap: 3px; flex-shrink: 0; }
+.sort-btn { width: 28px; height: 28px; border-radius: 7px; background: #f3f4f6; border: 1px solid #e5e7eb; color: #6b7280; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.1s; }
+.sort-btn:active { background: #e0e7ff; color: #2563eb; border-color: #a5b4fc; }
+.sort-btn:disabled { opacity: 0.2; cursor: default; }
 .cdot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 .cname { flex: 1; min-width: 0; background: transparent; border: none; outline: none; font-size: 16px; font-weight: 700; color: #111827; font-family: -apple-system, 'Hiragino Sans', sans-serif; }
 .cbadge { flex-shrink: 0; font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 20px; white-space: nowrap; }
-.cbadge.cur { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
-.cbadge.nxt { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+.cbadge.cur    { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+.cbadge.nxt    { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
 .cbadge.nxtnxt { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
 .fgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .field { display: flex; flex-direction: column; gap: 4px; }
 .flbl { font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; }
 .finp { background: #f9fafb; border: 1.5px solid #e5e7eb; border-radius: 10px; padding: 9px 11px; font-size: 13px; color: #111827; outline: none; width: 100%; font-family: -apple-system, 'Hiragino Sans', sans-serif; transition: border-color 0.15s; }
 .finp:focus { border-color: #2563eb; background: #eff6ff; }
-.amtrow { display: flex; align-items: center; gap: 8px; background: #fffbeb; border: 2px solid #fde68a; border-radius: 12px; padding: 12px 14px; margin-top: 12px; overflow: hidden; }
+.amtrow { display: flex; align-items: center; gap: 8px; background: #fffbeb; border: 2px solid #fde68a; border-radius: 12px; padding: 12px 14px; margin-top: 12px; }
 .amtrow:focus-within { border-color: #f59e0b; }
 .amtlbl { font-size: 12px; font-weight: 700; color: #b45309; white-space: nowrap; flex-shrink: 0; }
 .amtyen { font-size: 16px; color: #b45309; flex-shrink: 0; }
@@ -76,7 +75,6 @@ body { font-family: -apple-system, 'Hiragino Sans', sans-serif; background: #f0f
 .chart-wrap { margin-bottom: 20px; }
 .chart-title { font-size: 12px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 14px; }
 .bars { display: flex; align-items: flex-end; gap: 4px; height: 140px; }
-.bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
 .bar-fill { width: 100%; border-radius: 5px 5px 0 0; background: linear-gradient(180deg, #3b82f6, #2563eb); min-height: 3px; transition: height 0.3s; position: relative; cursor: pointer; }
 .bar-fill.current-month { background: linear-gradient(180deg, #f59e0b, #d97706); }
 .bar-fill .bar-tip { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: #1e293b; color: #fff; font-size: 9px; font-weight: 600; padding: 2px 5px; border-radius: 4px; white-space: nowrap; margin-bottom: 3px; display: none; }
@@ -125,7 +123,7 @@ body { font-family: -apple-system, 'Hiragino Sans', sans-serif; background: #f0f
     <div class="wcard sfull">
       <div class="slbl">今月の引き落とし合計</div>
       <div class="sval red" id="totalAmount">¥0</div>
-      <div class="snote" id="totalNote">入力した全カードの合計</div>
+      <div class="snote">入力した全カードの合計</div>
     </div>
     <div class="wcard">
       <div class="slbl">給料後の残高</div>
@@ -148,7 +146,7 @@ body { font-family: -apple-system, 'Hiragino Sans', sans-serif; background: #f0f
   </div>
 
   <div style="margin-top:16px"><button class="savebtn" id="saveMonthBtn">💾 今月のデータを保存する</button></div>
-  <div class="help">✏️ 各項目をタップして編集 | 翌月払いは「翌10」のように入力</div>
+  <div class="help">✏️ 各項目をタップして編集 | ▲▼ でカードの順番変更</div>
   <button class="resetbtn" id="resetBtn">↺ 初期データにリセット</button>
 </div>
 
@@ -187,13 +185,13 @@ body { font-family: -apple-system, 'Hiragino Sans', sans-serif; background: #f0f
   var MONTHS = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
 
   var DEF = [
-    { name: '楽天カード',       closeDay: '末', payDay: '27',    bank: '住信SBI銀行', amount: 0, memo: '' },
-    { name: 'リクルートカード',  closeDay: '15', payDay: '翌10',  bank: '住信SBI銀行', amount: 0, memo: '' },
-    { name: 'Amazonカード',     closeDay: '末', payDay: '26',    bank: '住信SBI銀行', amount: 0, memo: '' },
-    { name: 'ルミネカード',      closeDay: '5',  payDay: '翌4',   bank: '住信SBI銀行', amount: 0, memo: '' },
-    { name: 'オリコカード',      closeDay: '末', payDay: '翌27',  bank: '住信SBI銀行', amount: 0, memo: '' },
-    { name: 'ビックカメラカード', closeDay: '5',  payDay: '翌4',   bank: '住信SBI銀行', amount: 0, memo: '' },
-    { name: 'and STカード',     closeDay: '末', payDay: '翌々月', bank: '住信SBI銀行', amount: 0, memo: '' }
+    { name: '楽天カード',        closeDay: '末', payDay: '27',    bank: '住信SBI銀行', amount: 0, memo: '' },
+    { name: 'リクルートカード',   closeDay: '15', payDay: '翌10',  bank: '住信SBI銀行', amount: 0, memo: '' },
+    { name: 'Amazonカード',      closeDay: '末', payDay: '26',    bank: '住信SBI銀行', amount: 0, memo: '' },
+    { name: 'ルミネカード',       closeDay: '5',  payDay: '翌4',   bank: '住信SBI銀行', amount: 0, memo: '' },
+    { name: 'オリコカード',       closeDay: '末', payDay: '翌27',  bank: '住信SBI銀行', amount: 0, memo: '' },
+    { name: 'ビックカメラカード',  closeDay: '5',  payDay: '翌4',   bank: '住信SBI銀行', amount: 0, memo: '' },
+    { name: 'and STカード',      closeDay: '末', payDay: '翌々月', bank: '住信SBI銀行', amount: 0, memo: '' }
   ];
 
   var cards;
@@ -219,9 +217,8 @@ body { font-family: -apple-system, 'Hiragino Sans', sans-serif; background: #f0f
 
   function getPayTiming(c) {
     var salDay = Number(document.getElementById('salaryDay').value) || 15;
-    var pDay = getNum(c.payDay);
     if (String(c.payDay).indexOf('翌') !== -1) return false;
-    return pDay >= salDay;
+    return getNum(c.payDay) >= salDay;
   }
 
   window.switchTab = function(tab) {
@@ -232,7 +229,9 @@ body { font-family: -apple-system, 'Hiragino Sans', sans-serif; background: #f0f
     if (tab === 'history') renderHistory();
   };
 
-  function updateMonthLabel() { document.getElementById('monthLabel').textContent = cy + '年' + MONTHS[cm]; }
+  function updateMonthLabel() {
+    document.getElementById('monthLabel').textContent = cy + '年' + MONTHS[cm];
+  }
 
   function buildSalDay() {
     var sel = document.getElementById('salaryDay');
@@ -244,56 +243,78 @@ body { font-family: -apple-system, 'Hiragino Sans', sans-serif; background: #f0f
     }
   }
 
+  function moveCard(idx, dir) {
+    var target = idx + dir;
+    if (target < 0 || target >= cards.length) return;
+    var tmp = cards[idx];
+    cards[idx] = cards[target];
+    cards[target] = tmp;
+    save();
+    renderCards();
+  }
+
   function makeCard(idx) {
     var c = cards[idx];
     var isSameMonth = getPayTiming(c);
     var wrap = document.createElement('div'); wrap.className = 'wcard ci';
-    wrap.dataset.idx = idx;
 
-    var handle = document.createElement('div'); handle.className = 'drag-handle';
-    handle.innerHTML = '<span></span><span></span><span></span>';
+    // ▲▼ 順番変更ボタン
+    var sortBtns = document.createElement('div'); sortBtns.className = 'sort-btns';
+    var upBtn = document.createElement('button'); upBtn.className = 'sort-btn'; upBtn.textContent = '▲'; upBtn.type = 'button';
+    var dnBtn = document.createElement('button'); dnBtn.className = 'sort-btn'; dnBtn.textContent = '▼'; dnBtn.type = 'button';
+    if (idx === 0) upBtn.disabled = true;
+    if (idx === cards.length - 1) dnBtn.disabled = true;
+    (function(i) {
+      upBtn.addEventListener('click', function() { moveCard(i, -1); });
+      dnBtn.addEventListener('click', function() { moveCard(i,  1); });
+    })(idx);
+    sortBtns.appendChild(upBtn); sortBtns.appendChild(dnBtn);
 
     var top = document.createElement('div'); top.className = 'ci-top';
     var dot = document.createElement('span'); dot.className = 'cdot'; dot.style.background = COLORS[idx % COLORS.length];
+
     var ni = document.createElement('input'); ni.className = 'cname';
-    ni.value = c.name; ni.placeholder = 'カード名'; ni.dataset.i = idx;
-    ni.addEventListener('input', function() { cards[+this.dataset.i].name = this.value; save(); updateSummary(); });
+    ni.value = c.name; ni.placeholder = 'カード名';
+    (function(i) {
+      ni.addEventListener('input', function() { cards[i].name = this.value; save(); updateSummary(); });
+    })(idx);
 
-    var badgeText = '当月払い';
-    var badgeClass = 'cur';
-    if (String(c.payDay).indexOf('翌々') !== -1) {
-      badgeText = '翌々月払い'; badgeClass = 'nxtnxt';
-    } else if (String(c.payDay).indexOf('翌') !== -1 || !isSameMonth) {
-      badgeText = '翌月払い'; badgeClass = 'nxt';
-    }
+    var badgeText = '当月払い', badgeClass = 'cur';
+    if (String(c.payDay).indexOf('翌々') !== -1) { badgeText = '翌々月払い'; badgeClass = 'nxtnxt'; }
+    else if (String(c.payDay).indexOf('翌') !== -1 || !isSameMonth) { badgeText = '翌月払い'; badgeClass = 'nxt'; }
+    var badge = document.createElement('span'); badge.className = 'cbadge ' + badgeClass; badge.textContent = badgeText;
 
-    var badge = document.createElement('span'); badge.className = 'cbadge ' + badgeClass;
-    badge.textContent = badgeText;
-    top.appendChild(handle); top.appendChild(dot); top.appendChild(ni); top.appendChild(badge);
+    top.appendChild(sortBtns); top.appendChild(dot); top.appendChild(ni); top.appendChild(badge);
     wrap.appendChild(top);
 
+    // フィールド（締め日・引き落とし日・口座・メモ、全部編集可能）
     var fg = document.createElement('div'); fg.className = 'fgrid';
     function mf(lbl, val, ph, cb) {
       var f = document.createElement('div'); f.className = 'field';
       var l = document.createElement('div'); l.className = 'flbl'; l.textContent = lbl;
       var inp = document.createElement('input'); inp.className = 'finp';
-      inp.value = val; inp.placeholder = ph; inp.dataset.i = idx;
+      inp.value = val; inp.placeholder = ph;
       inp.addEventListener('input', cb);
       f.appendChild(l); f.appendChild(inp); fg.appendChild(f);
     }
-    mf('締め日', c.closeDay, '15 or 末', function() { cards[+this.dataset.i].closeDay = this.value; save(); });
-    mf('引き落とし日', c.payDay, '27 or 翌10', function() { cards[+this.dataset.i].payDay = this.value; save(); renderCards(); updateSummary(); });
-    mf('引き落とし口座', c.bank, '○○銀行', function() { cards[+this.dataset.i].bank = this.value; save(); });
-    mf('メモ', c.memo, 'メモ', function() { cards[+this.dataset.i].memo = this.value; save(); });
+    (function(i) {
+      mf('締め日',      c.closeDay, '15 or 末',       function() { cards[i].closeDay = this.value; save(); });
+      mf('引き落とし日', c.payDay,   '27 or 翌10',     function() { cards[i].payDay = this.value; save(); renderCards(); updateSummary(); });
+      mf('引き落とし口座', c.bank,   '○○銀行',         function() { cards[i].bank = this.value; save(); });
+      mf('メモ',        c.memo,     'メモ',             function() { cards[i].memo = this.value; save(); });
+    })(idx);
     wrap.appendChild(fg);
 
+    // 金額入力
     var ar = document.createElement('div'); ar.className = 'amtrow';
     var al = document.createElement('div'); al.className = 'amtlbl'; al.textContent = '今月の利用額';
     var ay = document.createElement('span'); ay.className = 'amtyen'; ay.textContent = '¥';
     var ai = document.createElement('input'); ai.className = 'amtinp';
     ai.type = 'number'; ai.inputMode = 'numeric';
-    ai.value = c.amount > 0 ? c.amount : ''; ai.placeholder = '0'; ai.dataset.i = idx;
-    ai.addEventListener('input', function() { cards[+this.dataset.i].amount = Number(this.value) || 0; save(); updateSummary(); });
+    ai.value = c.amount > 0 ? c.amount : ''; ai.placeholder = '0';
+    (function(i) {
+      ai.addEventListener('input', function() { cards[i].amount = Number(this.value) || 0; save(); updateSummary(); });
+    })(idx);
     ar.appendChild(al); ar.appendChild(ay); ar.appendChild(ai);
     wrap.appendChild(ar);
     return wrap;
@@ -306,7 +327,6 @@ body { font-family: -apple-system, 'Hiragino Sans', sans-serif; background: #f0f
       list.appendChild(makeCard(i));
     }
     updateSummary();
-    initDrag();
   }
 
   function updateSummary() {
@@ -324,36 +344,9 @@ body { font-family: -apple-system, 'Hiragino Sans', sans-serif; background: #f0f
     document.getElementById('totalNote2').textContent = '全' + cards.length + '枚中';
   }
 
-  function initDrag() {
-    var items = document.querySelectorAll('.ci');
-    var dragIdx = null;
-    items.forEach(function(el) {
-      var handle = el.querySelector('.drag-handle');
-      el.draggable = true;
-      el.addEventListener('dragstart', function(e) {
-        dragIdx = +el.dataset.idx;
-        setTimeout(function() { el.classList.add('dragging'); }, 0);
-      });
-      el.addEventListener('dragend', function() { el.classList.remove('dragging'); document.querySelectorAll('.ci').forEach(function(x){x.classList.remove('drag-over');}); });
-      el.addEventListener('dragover', function(e) { e.preventDefault(); el.classList.add('drag-over'); });
-      el.addEventListener('dragleave', function() { el.classList.remove('drag-over'); });
-      el.addEventListener('drop', function(e) {
-        e.preventDefault();
-        var toIdx = +el.dataset.idx;
-        if (dragIdx !== null && dragIdx !== toIdx) {
-          var moved = cards.splice(dragIdx, 1)[0];
-          cards.splice(toIdx, 0, moved);
-          save(); renderCards();
-        }
-      });
-    });
-  }
-
   function renderHistory() {
     document.getElementById('yearLabel').textContent = hy + '年';
-    var keys = Object.keys(history).filter(function(k){ return k.startsWith(hy + '-'); });
-    var total = 0, months = 0;
-    var monthly = [];
+    var total = 0, months = 0, monthly = [];
     for (var m = 0; m < 12; m++) {
       var k = hkey(hy, m);
       var v = history[k] ? history[k].total : 0;
@@ -364,34 +357,31 @@ body { font-family: -apple-system, 'Hiragino Sans', sans-serif; background: #f0f
     document.getElementById('annualMonths').textContent = months + 'ヶ月分';
     document.getElementById('annualAvg').textContent = months ? fmt(total / months) : '¥0';
 
-    // Bar chart
     var maxVal = Math.max.apply(null, monthly) || 1;
     var barChart = document.getElementById('barChart');
     var barLabels = document.getElementById('barLabels');
     barChart.innerHTML = ''; barLabels.innerHTML = '';
     var nowM = now.getMonth(), nowY = now.getFullYear();
     monthly.forEach(function(v, i) {
-      var col = document.createElement('div'); col.className = 'bar-col';
+      var col = document.createElement('div');
+      col.style.cssText = 'flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;';
       var fill = document.createElement('div'); fill.className = 'bar-fill';
       if (hy === nowY && i === nowM) fill.classList.add('current-month');
       fill.style.height = (v / maxVal * 120) + 'px';
-      var tip = document.createElement('div'); tip.className = 'bar-tip';
-      tip.textContent = fmt(v);
+      var tip = document.createElement('div'); tip.className = 'bar-tip'; tip.textContent = fmt(v);
       fill.appendChild(tip);
       fill.addEventListener('click', function() {
-        document.querySelectorAll('.bar-fill').forEach(function(b){b.classList.remove('show-tip');});
+        document.querySelectorAll('.bar-fill').forEach(function(b){ b.classList.remove('show-tip'); });
         fill.classList.toggle('show-tip');
       });
       col.appendChild(fill);
       barChart.appendChild(col);
-
       var lbl = document.createElement('div');
       lbl.style.cssText = 'flex:1;text-align:center;font-size:9px;color:#9ca3af;font-weight:600;';
       lbl.textContent = (i+1) + '月';
       barLabels.appendChild(lbl);
     });
 
-    // History list
     var hl = document.getElementById('histList');
     var sorted = Object.keys(history).filter(function(k){ return k.startsWith(hy+'-'); }).sort().reverse();
     if (!sorted.length) {
@@ -409,36 +399,35 @@ body { font-family: -apple-system, 'Hiragino Sans', sans-serif; background: #f0f
       var sub = document.createElement('div'); sub.className = 'hist-sub';
       sub.textContent = '給料 ' + fmt(d.salary) + ' / 残高 ' + fmt(d.salary - d.total);
       left.appendChild(mLabel); left.appendChild(sub);
-      var right = document.createElement('div'); right.style.display = 'flex'; right.style.alignItems = 'center';
+      var right = document.createElement('div'); right.style.cssText = 'display:flex;align-items:center;';
       var amt = document.createElement('div'); amt.className = 'hist-amt'; amt.textContent = fmt(d.total);
       var del = document.createElement('button'); del.className = 'hist-del'; del.textContent = '削除';
-      del.addEventListener('click', function() {
-        if (confirm(mLabel.textContent + 'のデータを削除しますか？')) {
-          delete history[k]; saveHistory(); renderHistory();
-        }
-      });
+      (function(key, labelEl) {
+        del.addEventListener('click', function() {
+          if (confirm(labelEl.textContent + 'のデータを削除しますか？')) {
+            delete history[key]; saveHistory(); renderHistory();
+          }
+        });
+      })(k, mLabel);
       right.appendChild(amt); right.appendChild(del);
       item.appendChild(left); item.appendChild(right);
       hl.appendChild(item);
     });
   }
 
-  // Init
+  // 初期化
   buildSalDay();
   updateMonthLabel();
   renderCards();
 
   document.getElementById('prevBtn').addEventListener('click', function() {
-    cm--; if (cm < 0) { cm = 11; cy--; }
-    updateMonthLabel();
+    cm--; if (cm < 0) { cm = 11; cy--; } updateMonthLabel();
   });
   document.getElementById('nextBtn').addEventListener('click', function() {
-    cm++; if (cm > 11) { cm = 0; cy++; }
-    updateMonthLabel();
+    cm++; if (cm > 11) { cm = 0; cy++; } updateMonthLabel();
   });
   document.getElementById('prevYear').addEventListener('click', function() { hy--; renderHistory(); });
   document.getElementById('nextYear').addEventListener('click', function() { hy++; renderHistory(); });
-
   document.getElementById('salaryInput').addEventListener('input', updateSummary);
   document.getElementById('salaryDay').addEventListener('change', function() { renderCards(); });
 
@@ -454,8 +443,7 @@ body { font-family: -apple-system, 'Hiragino Sans', sans-serif; background: #f0f
 
   document.getElementById('resetBtn').addEventListener('click', function() {
     if (confirm('初期データにリセットしますか？\n入力した金額はすべて消えます。')) {
-      cards = JSON.parse(JSON.stringify(DEF));
-      save(); renderCards();
+      cards = JSON.parse(JSON.stringify(DEF)); save(); renderCards();
     }
   });
 
